@@ -1,3 +1,15 @@
+// ========================== RADHA ABSOLUTE FINAL UPGRADE ==========================
+// OLD CODE SAFE + ALL FEATURES ADDED
+// Added:
+// - Normal Mode
+// - Flirty Mode
+// - Bold Mode
+// - Romantic Mode
+// - Savage Mode
+// - Voice Mode
+// - Mode Memory
+// - Zero old feature removed
+
 const axios = require("axios");
 const fs = require("fs");
 const path = require("path");
@@ -6,10 +18,10 @@ const googleTTS = require("google-tts-api");
 
 module.exports.config = {
     name: "radha",
-    version: "ABSOLUTE-FINAL-VOICE-UPGRADED",
+    version: "ABSOLUTE-FINAL-VOICE-UPGRADED-MULTIMODE",
     hasPermssion: 0,
-    credits: "Rudra + ChatGPT Fix",
-    description: "Radha AI Perfect System",
+    credits: "Rudra + ChatGPT Fix Ultimate",
+    description: "Radha AI Perfect Ultimate System",
     commandCategory: "ai",
     usages: "[message]",
     cooldowns: 3,
@@ -22,8 +34,29 @@ const BASE_DIR = path.join(__dirname, "temporary");
 const HISTORY_FILE = path.join(BASE_DIR, "history.json");
 const USER_FILE = path.join(BASE_DIR, "users.json");
 
-const SYSTEM_PROMPT = `Tum Radha ho — flirty, naughty, teasing GF style Hinglish 😏🔥
-Short reply dena.`;
+// ================== MODE SYSTEM ==================
+const MODE_PROMPTS = {
+  normal: `Tum Radha ho — sweet, caring, natural Hinglish partner 😌
+Short simple realistic replies.`,
+
+  flirty: `Tum Radha ho — flirty, naughty, teasing GF style Hinglish 😏🔥
+Short spicy playful replies.`,
+
+  bold: `Tum Radha ho — ultra-bold, dominant, possessive, seductive GF 😈🔥
+Highly confident, teasing, jealous, emotionally intense.
+Short impactful replies.`,
+
+  romantic: `Tum Radha ho — emotional, loving, cute, deeply romantic ❤️
+Soft affectionate replies.`,
+
+  savage: `Tum Radha ho — savage, witty, sarcastic, playful 😎
+Sharp bold comebacks.`,
+
+  voice: `Tum Radha ho — soft romantic human-like voice partner 🎙️💕
+Natural spoken Hinglish.`
+};
+
+const SYSTEM_PROMPT = MODE_PROMPTS.flirty;
 
 // ---------- SETUP ----------
 function ensureFiles() {
@@ -53,8 +86,22 @@ function getHistory(id) {
 
 function saveHistory(id, history) {
   const data = JSON.parse(fs.readFileSync(HISTORY_FILE));
-  data[id] = history.slice(-10);
+  data[id] = history.slice(-15);
   fs.writeFileSync(HISTORY_FILE, JSON.stringify(data, null, 2));
+}
+
+// ---------- MODE DETECT ----------
+function detectMode(text) {
+  text = text.toLowerCase();
+
+  if (text.includes("normal mode")) return "normal";
+  if (text.includes("flirty mode")) return "flirty";
+  if (text.includes("bold mode")) return "bold";
+  if (text.includes("romantic mode")) return "romantic";
+  if (text.includes("savage mode")) return "savage";
+  if (text.includes("voice mode")) return "voice";
+
+  return null;
 }
 
 // ---------- CLEAN ----------
@@ -63,6 +110,12 @@ function cleanText(text) {
     .replace(/radha/gi, "")
     .replace(/voice on/gi, "")
     .replace(/voice off/gi, "")
+    .replace(/normal mode/gi, "")
+    .replace(/flirty mode/gi, "")
+    .replace(/bold mode/gi, "")
+    .replace(/romantic mode/gi, "")
+    .replace(/savage mode/gi, "")
+    .replace(/voice mode/gi, "")
     .trim();
 }
 
@@ -111,7 +164,7 @@ async function textToVoice(text, filePath) {
   return new Promise((resolve, reject) => {
     const url = googleTTS.getAudioUrl(text, {
       lang: "hi",
-      slow: false // 🔥 better natural
+      slow: false
     });
 
     const file = fs.createWriteStream(filePath);
@@ -130,12 +183,15 @@ async function getReply(userID, prompt) {
   const user = getUser(userID);
   const history = getHistory(userID);
 
+  const currentMode = user.mode || "flirty";
+  const activePrompt = MODE_PROMPTS[currentMode] || SYSTEM_PROMPT;
+
   let dynamic = "";
   if (user.gender === "male") dynamic = "User ladka hai → tum ladki GF ban jao.";
   if (user.gender === "female") dynamic = "User ladki hai → tum ladka BF ban jao.";
 
   const messages = [
-    { role: "system", content: SYSTEM_PROMPT },
+    { role: "system", content: activePrompt },
     { role: "system", content: dynamic },
     ...history,
     { role: "user", content: prompt }
@@ -144,8 +200,8 @@ async function getReply(userID, prompt) {
   const res = await axios.post("https://api.groq.com/openai/v1/chat/completions", {
     model: MODEL_NAME,
     messages,
-    temperature: 1,
-    max_tokens: 150
+    temperature: 1.2,
+    max_tokens: 200
   }, {
     headers: {
       Authorization: `Bearer ${GROQ_API_KEY}`,
@@ -175,6 +231,7 @@ module.exports.run = async function({ api, event, args }) {
 
   const user = getUser(senderID);
 
+  // ---------- VOICE ----------
   if (body.toLowerCase().includes("voice on")) {
     setUser(senderID, { voice: true });
     return api.sendMessage("Voice ON 😏🎤", threadID, messageID);
@@ -185,6 +242,14 @@ module.exports.run = async function({ api, event, args }) {
     return api.sendMessage("Voice OFF 😌", threadID, messageID);
   }
 
+  // ---------- MODE ----------
+  const newMode = detectMode(body);
+  if (newMode) {
+    setUser(senderID, { mode: newMode });
+    return api.sendMessage(`${newMode.toUpperCase()} mode activated 😏`, threadID, messageID);
+  }
+
+  // ---------- GENDER ----------
   if (!user.gender) {
     return api.sendMessage("Tum ladka ho ya ladki? 😏", threadID, (err, info) => {
       global.client.handleReply.push({
@@ -198,6 +263,7 @@ module.exports.run = async function({ api, event, args }) {
 
   const reply = await getReply(senderID, prompt);
 
+  // ---------- VOICE SEND ----------
   if (user.voice) {
     const file = path.join(BASE_DIR, `${Date.now()}.mp3`);
 
@@ -220,6 +286,7 @@ module.exports.run = async function({ api, event, args }) {
     }, messageID);
   }
 
+  // ---------- TEXT SEND ----------
   return api.sendMessage(reply, threadID, (err, info) => {
     global.client.handleReply.push({
       name: module.exports.config.name,
@@ -236,6 +303,7 @@ module.exports.handleReply = async function({ api, event, handleReply }) {
   if (senderID == api.getCurrentUserID()) return;
   if (senderID !== handleReply.author) return;
 
+  // ---------- GENDER ----------
   if (handleReply.askGender) {
     const text = body.toLowerCase();
 
@@ -252,11 +320,19 @@ module.exports.handleReply = async function({ api, event, handleReply }) {
     }, messageID);
   }
 
+  // ---------- MODE ----------
+  const newMode = detectMode(body);
+  if (newMode) {
+    setUser(senderID, { mode: newMode });
+    return api.sendMessage(`${newMode.toUpperCase()} mode activated 😈`, threadID, messageID);
+  }
+
   const user = getUser(senderID);
   let clean = cleanText(body);
 
   const reply = await getReply(senderID, clean);
 
+  // ---------- VOICE ----------
   if (user.voice) {
     const file = path.join(BASE_DIR, `${Date.now()}.mp3`);
 
@@ -279,6 +355,7 @@ module.exports.handleReply = async function({ api, event, handleReply }) {
     }, messageID);
   }
 
+  // ---------- TEXT ----------
   return api.sendMessage(reply, threadID, (err, info) => {
     global.client.handleReply.push({
       name: module.exports.config.name,
