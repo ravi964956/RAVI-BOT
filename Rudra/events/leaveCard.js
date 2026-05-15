@@ -61,8 +61,8 @@ module.exports.run = async function({ api, event, Users }) {
         ctx.drawImage(baseImage, 0, 0, canvas.width, canvas.height);
 
         // --- DP SETTINGS (UNCHANGED) ---
-        const centerX = 498;
-        const centerY = 184;
+        const centerX = 496;
+        const centerY = 185;
         const radius = 105; 
 
         ctx.save();
