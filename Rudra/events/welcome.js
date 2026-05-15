@@ -1,12 +1,12 @@
 module.exports.config = {
     name: "welcomeCard",
     eventType: ["log:subscribe"],
-    version: "1.0.8",
+    version: "1.0.9",
     credits: "Ravi Kumar Prajapat",
-    description: "DP in Circle with Name and Group Name",
+    description: "Fixed Circle DP and Name Only",
 };
 
-module.exports.run = async function({ api, event, Users, Threads }) {
+module.exports.run = async function({ api, event, Users }) {
     const { threadID, logMessageData } = event;
     const axios = require("axios");
     const { createCanvas, loadImage } = require("canvas");
@@ -20,10 +20,6 @@ module.exports.run = async function({ api, event, Users, Threads }) {
         
         try {
             const name = await Users.getNameUser(userID);
-            const threadInfo = await Threads.getInfo(threadID);
-            const threadName = threadInfo.threadName || "this group";
-
-            // इमेज लिंक्स
             const bgURL = "https://i.ibb.co/vzYvYvY/1000349683.jpg"; 
             const fbToken = "6628568379%7Cc1e620fa708a1d5696fb991c1bde5662";
             const avatarUrl = `https://graph.facebook.com/${userID}/picture?width=512&height=512&access_token=${fbToken}`;
@@ -32,7 +28,6 @@ module.exports.run = async function({ api, event, Users, Threads }) {
             if (!fs.existsSync(cacheDir)) fs.mkdirSync(cacheDir, { recursive: true });
             const pathImg = path.join(cacheDir, `welcome_${userID}.png`);
 
-            // लोड इमेजेस
             const [baseImage, response] = await Promise.all([
                 loadImage(bgURL),
                 axios.get(avatarUrl, { responseType: 'arraybuffer' })
@@ -42,49 +37,36 @@ module.exports.run = async function({ api, event, Users, Threads }) {
             const canvas = createCanvas(baseImage.width, baseImage.height);
             const ctx = canvas.getContext("2d");
 
-            // 1. बैकग्राउंड ड्रा करें
+            // बैकग्राउंड
             ctx.drawImage(baseImage, 0, 0, canvas.width, canvas.height);
 
-            // 2. DP को घेरे में फिट करना (Perfect Circle Logic)
-            const centerX = canvas.width / 2; // सेंटर
-            const centerY = 145;             // घेरे की ऊँचाई
-            const radius = 88;               // घेरे का साइज
-
+            // DP को घेरे (Circle) में डालना - Perfect Position
             ctx.save();
             ctx.beginPath();
-            ctx.arc(centerX, centerY, radius, 0, Math.PI * 2, true);
+            ctx.arc(300, 148, 88, 0, Math.PI * 2, true); // यहाँ घेरे की जगह सेट की है
             ctx.closePath();
             ctx.clip();
-            ctx.drawImage(avatar, centerX - radius, centerY - radius, radius * 2, radius * 2);
+            ctx.drawImage(avatar, 212, 60, 176, 176); // DP को घेरे के अंदर बिठाया है
             ctx.restore();
 
-            // 3. यूजर का प्रोफाइल नेम (सफेद रंग)
+            // यूजर का नाम
             ctx.font = "bold 45px Arial";
             ctx.fillStyle = "#FFFFFF";
             ctx.textAlign = "center";
-            let shortName = name.length > 18 ? name.slice(0, 16) + "..." : name;
-            ctx.fillText(shortName, canvas.width / 2, 290);
+            ctx.fillText(name, 300, 295); // नाम की जगह
 
-            // 4. ग्रुप का नाम (हल्का ग्रे या सफेद)
-            ctx.font = "italic 30px Arial";
-            ctx.fillStyle = "rgba(255, 255, 255, 0.8)";
-            let gName = threadName.length > 25 ? threadName.slice(0, 23) + "..." : threadName;
-            ctx.fillText(gName, canvas.width / 2, 340);
-
-            // सेव और सेंड
             fs.writeFileSync(pathImg, canvas.toBuffer());
 
-            await api.sendMessage({
+            api.sendMessage({
                 body: `Welcome ${name}! हमारे ग्रुप में आपका स्वागत है। ❤️`,
                 attachment: fs.createReadStream(pathImg),
                 mentions: [{ tag: name, id: userID }]
-            }, threadID);
-
-            if (fs.existsSync(pathImg)) fs.unlinkSync(pathImg);
+            }, threadID, () => {
+                if (fs.existsSync(pathImg)) fs.unlinkSync(pathImg);
+            });
 
         } catch (err) {
-            console.log("Welcome Error:", err);
-            api.sendMessage(`Welcome!`, threadID);
+            console.log(err);
         }
     }
 };
