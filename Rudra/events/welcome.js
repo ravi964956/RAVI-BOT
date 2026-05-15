@@ -87,7 +87,7 @@ module.exports.run = async function({ api, event, Users }) {
                       `⏰ Time: ${time}\n` +
                       `🌟 Day: ${day}\n\n` +
                       `हमारे ग्रुप में आपका स्वागत है!\n` +
-                    'MADY BY RK-PRAJAPAT 💕,
+                      `MADY BY RK-PRAJAPAT 💕`,
                 attachment: fs.createReadStream(pathImg),
                 mentions: [{ tag: name, id: userID }]
             }, threadID, () => {
