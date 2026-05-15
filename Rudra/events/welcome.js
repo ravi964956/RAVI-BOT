@@ -1,9 +1,9 @@
 module.exports.config = {
     name: "welcomeCard",
     eventType: ["log:subscribe"],
-    version: "1.1.8",
+    version: "1.2.2",
     credits: "Ravi Kumar Prajapat",
-    description: "Welcome using local background image",
+    description: "Welcome with Name, Group Name, Kolkata Time and Member Count",
 };
 
 module.exports.run = async function({ api, event, Users }) {
@@ -12,6 +12,7 @@ module.exports.run = async function({ api, event, Users }) {
     const { createCanvas, loadImage } = require("canvas");
     const fs = require("fs-extra");
     const path = require("path");
+    const moment = require("moment-timezone");
 
     if (logMessageData.addedParticipants.some(i => i.userFbId == api.getCurrentUserID())) return;
 
@@ -19,22 +20,33 @@ module.exports.run = async function({ api, event, Users }) {
         const userID = user.userFbId;
         
         try {
-            const name = await Users.getNameUser(userID);
+            // 1. ASLI NAAM FETCH KARNA
+            let userInfo = await api.getUserInfo(userID);
+            let name = userInfo[userID]?.name || await Users.getNameUser(userID) || "New Member";
             
-            // --- लोकल पाथ सेटिंग्स ---
+            // 2. GROUP INFO AUR MEMBER COUNT
+            let threadInfo = await api.getThreadInfo(threadID);
+            let threadName = threadInfo.threadName || "इस ग्रुप";
+            let memCount = threadInfo.participantIDs.length; // Total members count
+
+            // 3. KOLKATA TIME, DATE AUR DAY
+            const kolkataTime = moment.tz("Asia/Kolkata");
+            const date = kolkataTime.format("DD/MM/YYYY");
+            const time = kolkataTime.format("hh:mm:ss A");
+            const day = kolkataTime.format("dddd");
+
+            // --- LOCAL PATH SETTINGS ---
             const cacheDir = path.join(__dirname, "cache");
-            const bgPath = path.join(cacheDir, "background.jpg"); // यहाँ से फोटो उठाएगा
+            const bgPath = path.join(cacheDir, "background.jpg");
             const pathImg = path.join(cacheDir, `welcome_${userID}.png`);
             
             const fbToken = "6628568379%7Cc1e620fa708a1d5696fb991c1bde5662";
             const avatarUrl = `https://graph.facebook.com/${userID}/picture?width=512&height=512&access_token=${fbToken}`;
 
-            // अगर फाइल नहीं मिलती तो एरर दे
             if (!fs.existsSync(bgPath)) {
-                return console.log("Error: background.jpg cache folder mein nahi mili!");
+                return console.log("Error: background.jpg nahi mili!");
             }
 
-            // बैकग्राउंड (Local) और DP (Online) लोड करें
             const [baseImage, response] = await Promise.all([
                 loadImage(bgPath),
                 axios.get(avatarUrl, { responseType: 'arraybuffer' })
@@ -43,10 +55,9 @@ module.exports.run = async function({ api, event, Users }) {
 
             const canvas = createCanvas(baseImage.width, baseImage.height);
             const ctx = canvas.getContext("2d");
-
             ctx.drawImage(baseImage, 0, 0, canvas.width, canvas.height);
 
-            // DP इन सर्कल (Purple Image Coordinates)
+            // --- DP SETTINGS (BILKUL SAME HAI) ---
             const centerX = 1013;
             const centerY = 328;
             const radius = 185; 
@@ -59,7 +70,7 @@ module.exports.run = async function({ api, event, Users }) {
             ctx.drawImage(avatar, centerX - radius, centerY - radius, radius * 2, radius * 2);
             ctx.restore();
 
-            // नाम
+            // PHOTO PAR NAAM
             ctx.font = "bold 45px Arial";
             ctx.fillStyle = "#FFFFFF";
             ctx.textAlign = "center";
@@ -67,8 +78,15 @@ module.exports.run = async function({ api, event, Users }) {
 
             fs.writeFileSync(pathImg, canvas.toBuffer());
 
+            // FINAL MESSAGE WITH MEMBER COUNT
             api.sendMessage({
-                body: `Welcome ${name}! हमारे ग्रुप में आपका स्वागत है। ❤️`,
+                body: `Welcome ${name}! ❤️\n\n` +
+                      `📌 Group: ${threadName}\n` +
+                      `👥 Ab group mein ${memCount} members ho gaye hain, khush ho jao! 🎉\n\n` +
+                      `📅 Date: ${date}\n` +
+                      `⏰ Time: ${time} (Kolkata)\n` +
+                      `🌟 Day: ${day}\n\n` +
+                      `हमारे ग्रुप में आपका स्वागत है!`,
                 attachment: fs.createReadStream(pathImg),
                 mentions: [{ tag: name, id: userID }]
             }, threadID, () => {
