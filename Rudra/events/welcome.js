@@ -1,12 +1,12 @@
 module.exports.config = {
     name: "welcomeCard",
     eventType: ["log:subscribe"],
-    version: "1.0.6",
+    version: "1.0.8",
     credits: "Ravi Kumar Prajapat",
-    description: "Welcome members with custom background",
+    description: "DP in Circle with Name and Group Name",
 };
 
-module.exports.run = async function({ api, event, Users }) {
+module.exports.run = async function({ api, event, Users, Threads }) {
     const { threadID, logMessageData } = event;
     const axios = require("axios");
     const { createCanvas, loadImage } = require("canvas");
@@ -17,19 +17,22 @@ module.exports.run = async function({ api, event, Users }) {
 
     for (let user of logMessageData.addedParticipants) {
         const userID = user.userFbId;
-        const name = await Users.getNameUser(userID);
         
-        // --- नया इमेज लिंक जो आपने दिया है ---
-        const bgURL = "https://i.postimg.cc/SxNRZxwY/IMG-20260513-210012.jpg"; 
-        const fbToken = "6628568379%7Cc1e620fa708a1d5696fb991c1bde5662";
-        const avatarUrl = `https://graph.facebook.com/${userID}/picture?width=512&height=512&access_token=${fbToken}`;
-        
-        const cacheDir = path.join(__dirname, "cache");
-        if (!fs.existsSync(cacheDir)) fs.mkdirSync(cacheDir, { recursive: true });
-        const pathImg = path.join(cacheDir, `welcome_${userID}.png`);
-
         try {
-            // इमेज और प्रोफाइल पिक्चर लोड करें
+            const name = await Users.getNameUser(userID);
+            const threadInfo = await Threads.getInfo(threadID);
+            const threadName = threadInfo.threadName || "this group";
+
+            // इमेज लिंक्स
+            const bgURL = "https://i.ibb.co/vzYvYvY/1000349683.jpg"; 
+            const fbToken = "6628568379%7Cc1e620fa708a1d5696fb991c1bde5662";
+            const avatarUrl = `https://graph.facebook.com/${userID}/picture?width=512&height=512&access_token=${fbToken}`;
+            
+            const cacheDir = path.join(__dirname, "cache");
+            if (!fs.existsSync(cacheDir)) fs.mkdirSync(cacheDir, { recursive: true });
+            const pathImg = path.join(cacheDir, `welcome_${userID}.png`);
+
+            // लोड इमेजेस
             const [baseImage, response] = await Promise.all([
                 loadImage(bgURL),
                 axios.get(avatarUrl, { responseType: 'arraybuffer' })
@@ -39,32 +42,36 @@ module.exports.run = async function({ api, event, Users }) {
             const canvas = createCanvas(baseImage.width, baseImage.height);
             const ctx = canvas.getContext("2d");
 
-            // बैकग्राउंड ड्रॉ करें
+            // 1. बैकग्राउंड ड्रा करें
             ctx.drawImage(baseImage, 0, 0, canvas.width, canvas.height);
 
-            // --- DP की पोजीशन (सर्कल) ---
-            const avatarSize = 380; // साइज थोड़ा बढ़ाया है
-            const centerX = 265;   // X-अक्ष (बाएँ से दूरी)
-            const centerY = 460;   // Y-अक्ष (ऊपर से दूरी)
+            // 2. DP को घेरे में फिट करना (Perfect Circle Logic)
+            const centerX = canvas.width / 2; // सेंटर
+            const centerY = 145;             // घेरे की ऊँचाई
+            const radius = 88;               // घेरे का साइज
 
             ctx.save();
             ctx.beginPath();
-            ctx.arc(centerX, centerY, avatarSize / 2, 0, Math.PI * 2, true);
+            ctx.arc(centerX, centerY, radius, 0, Math.PI * 2, true);
             ctx.closePath();
             ctx.clip();
-            ctx.drawImage(avatar, centerX - (avatarSize / 2), centerY - (avatarSize / 2), avatarSize, avatarSize);
+            ctx.drawImage(avatar, centerX - radius, centerY - radius, radius * 2, radius * 2);
             ctx.restore();
 
-            // --- नाम की पोजीशन ---
-            ctx.font = "bold 65px Arial";
-            ctx.fillStyle = "#000000"; // काला रंग (आपकी इमेज के हिसाब से)
-            ctx.textAlign = "left";
-            
-            // नाम बहुत लंबा हो तो उसे संभालें
-            let displayName = name.length > 20 ? name.slice(0, 18) + "..." : name;
-            ctx.fillText(displayName, 550, 470);
+            // 3. यूजर का प्रोफाइल नेम (सफेद रंग)
+            ctx.font = "bold 45px Arial";
+            ctx.fillStyle = "#FFFFFF";
+            ctx.textAlign = "center";
+            let shortName = name.length > 18 ? name.slice(0, 16) + "..." : name;
+            ctx.fillText(shortName, canvas.width / 2, 290);
 
-            // इमेज सेव और सेंड
+            // 4. ग्रुप का नाम (हल्का ग्रे या सफेद)
+            ctx.font = "italic 30px Arial";
+            ctx.fillStyle = "rgba(255, 255, 255, 0.8)";
+            let gName = threadName.length > 25 ? threadName.slice(0, 23) + "..." : threadName;
+            ctx.fillText(gName, canvas.width / 2, 340);
+
+            // सेव और सेंड
             fs.writeFileSync(pathImg, canvas.toBuffer());
 
             await api.sendMessage({
@@ -73,12 +80,11 @@ module.exports.run = async function({ api, event, Users }) {
                 mentions: [{ tag: name, id: userID }]
             }, threadID);
 
-            // भेजने के बाद टेम्परेरी फाइल डिलीट करें
             if (fs.existsSync(pathImg)) fs.unlinkSync(pathImg);
 
         } catch (err) {
-            console.log("Welcome Card Error Details:", err.message);
-            api.sendMessage(`Welcome ${name}!`, threadID);
+            console.log("Welcome Error:", err);
+            api.sendMessage(`Welcome!`, threadID);
         }
     }
 };
