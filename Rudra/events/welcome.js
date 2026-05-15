@@ -47,7 +47,7 @@ module.exports.run = async function({ api, event, Users }) {
             ctx.drawImage(baseImage, 0, 0, canvas.width, canvas.height);
 
             // DP इन सर्कल (Purple Image Coordinates)
-            const centerX = 1050;
+            const centerX = 990;
             const centerY = 330;
             const radius = 185; 
 
@@ -63,7 +63,7 @@ module.exports.run = async function({ api, event, Users }) {
             ctx.font = "bold 45px Arial";
             ctx.fillStyle = "#FFFFFF";
             ctx.textAlign = "center";
-            ctx.fillText(name, 500, 295);
+            ctx.fillText(name, 500, 160);
 
             fs.writeFileSync(pathImg, canvas.toBuffer());
 
