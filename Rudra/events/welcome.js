@@ -47,9 +47,9 @@ module.exports.run = async function({ api, event, Users }) {
             ctx.drawImage(baseImage, 0, 0, canvas.width, canvas.height);
 
             // DP इन सर्कल (Purple Image Coordinates)
-            const centerX = 300;
-            const centerY = 148;
-            const radius = 88; 
+            const centerX = 148;
+            const centerY = 300;
+            const radius = 150; 
 
             ctx.save();
             ctx.beginPath();
