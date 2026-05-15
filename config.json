@@ -12,27 +12,27 @@
     "EMAIL": "",
     "PASSWORD": "",
     "OTPKEY": "",
-    "BOTNAME": "Rudra",
-    "PREFIX": "/",
+    "BOTNAME": "✿⃝𝆭⧗⃪ ꯭𝄈𝄅𝄄𝄅꯭🦚꯭𝆭𝀝꯭𝐑꯭𝐊𝀝꯭𝐏𝐑𝐀𝐉𝐀𝐏𝐀𝐓𝀝꯭🪈꯭𝄅𝄄𝄅𝄈꯭ ⃪𝆭⧗⃝✿",
+    "PREFIX": ".",
     "OTHERBOT": [
         ""
     ],
     "UNSENTVIP": [
-        "61550558518720",
+        "61573328623221",
         ""
     ],
     "GOD": [
-        "61550558518720",
+        "61573328623221",
         ""
     ],
     "ADMINBOT": [
-        "61550558518720",
+        "61573328623221",
         ""
     ],
-    "OWNER": "🆁︎🆄︎🅳︎🆁︎🅰︎ 🅹︎🅰︎🅰︎🆃︎",
+    "OWNER": "🆁︎🅺︎-🅿︎🆁︎🅰︎🅹︎🅰︎🅿︎🅰︎🆃︎",
     "AGE": "21",
     "GENDER": "𝗠𝗮𝗟𝗲",
-    "FACEBOOK": "https://www.facebook.com/share/15Z3vxfcBJ/",
+    "FACEBOOK": "https://www.facebook.com/profile.php?id=61573328623221",
     "AutoOffBot": "disable",
     "AutoOffBotStartSleep": "disable",
     "AutoOffBotSendMessage": "Bye everyone. i need to sleep i'll be right back at 5:00AM 🥰",
@@ -41,7 +41,7 @@
     "AutoGreetWithSticker": "enable",
     "AutoGreetSendPerHour": "1",
     "AutoPost": "enable",
-    "AutoPostText": "༻𝐎𝐖𝐍𝐄𝐑:- ☞Rudra☜ ༺ ༒𝚈𝚘𝚞 𝙲𝚊𝚗 𝙲𝚊𝚕𝚕 𝙷𝚒𝚖 〠ℝ𝕦𝕕𝕣𝕒〠.༒ ༒𝐇𝐢𝐬 𝐅𝐚𝐜𝐞𝐛𝐨𝐨𝐤 𝐢𝐝༒:- ☞ www.facebook.com/profile.php?id=61550558518720 ☜ ֎𝘍𝘰𝘳 𝘈𝘯𝘺 𝘒𝘪𝘯𝘥 𝘖𝘧 𝘏𝘦𝘭𝘱 :- https://t.me/ℝ𝕦𝕕𝕣𝕒 𝕁𝕒𝕒𝕥☜",
+    "AutoPostText": "༻𝐎𝐖𝐍𝐄𝐑:- ☞ℝ𝕂-ℙℝ𝔸𝕁𝔸ℙ𝔸𝕋☜ ༺ ༒𝚈𝚘𝚞 𝙲𝚊𝚗 𝙲𝚊𝚕𝚕 𝙷𝚒𝚖 〠𝗥𝗞-𝗣𝗥𝗔𝗝𝗔𝗣𝗔𝗧〠.༒ ༒𝐇𝐢𝐬 𝐅𝐚𝐜𝐞𝐛𝐨𝐨𝐤 𝐢𝐝༒:- ☞ https://www.facebook.com/profile.php?id=61573328623221 ☜",
     "AutoPostPerHour": "1",
     "AutoPostGreet": "disable",
     "AutoPostGreetPostPerHour": "6",
@@ -52,7 +52,7 @@
     "AutoPendingGroupChat": "accept",
     "AutoBioStatus": "enable",
     "AutoBioStatusSetPerHour": "1",
-    "BioStatus": "༻𝐎𝐖𝐍𝐄𝐑:- ☞ℝ𝕦𝕕𝕣𝕒 𝕁𝕒𝕒𝕥☜ ༺ ༒𝚈𝚘𝚞 𝙲𝚊𝚗 𝙲𝚊𝚕𝚕 𝙷𝚒𝚖 〠ℝ𝕦𝕕𝕣𝕒〠.༒ ༒𝐇𝐢𝐬 𝐅𝐚𝐜𝐞𝐛𝐨𝐨𝐤 𝐢𝐝༒:- ☞ www.facebook.com/profile.php?id=61550558518720 ☜ ֎𝘍𝘰𝘳 𝘈𝘯𝘺 𝘒𝘪𝘯𝘥 𝘖𝘧 𝘏𝘦𝘭𝘱 :- https://t.me/Rudra jaat☜",
+    "BioStatus": "༻𝐎𝐖𝐍𝐄𝐑:- ☞ℝ𝕂-ℙℝ𝔸𝕁𝔸ℙ𝔸𝕋☜ ༺ ༒𝚈𝚘𝚞 𝙲𝚊𝚗 𝙲𝚊𝚕𝚕 𝙷𝚒𝚖 〠𝗥𝗞-𝗣𝗥𝗔𝗝𝗔𝗣𝗔𝗧〠.༒ ༒𝐇𝐢𝐬 𝐅𝐚𝐜𝐞𝐛𝐨𝐨𝐤 𝐢𝐝༒:- ☞ https://www.facebook.com/profile.php?id=61573328623221 ☜",
     "AutoLeave": "enable",
     "RandomRedditMemes": "enable",
     "RandomRedditMemesSendPerHour": "1",
