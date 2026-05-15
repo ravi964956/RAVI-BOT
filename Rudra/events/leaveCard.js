@@ -62,7 +62,7 @@ module.exports.run = async function({ api, event, Users }) {
 
         // --- DP SETTINGS (UNCHANGED) ---
         const centerX = 500;
-        const centerY = 160;
+        const centerY = 180;
         const radius = 105; 
 
         ctx.save();
@@ -77,7 +77,7 @@ module.exports.run = async function({ api, event, Users }) {
         ctx.font = "bold 45px Arial";
         ctx.fillStyle = "#FFFFFF";
         ctx.textAlign = "center";
-        ctx.fillText(name, 520, 350);
+        ctx.fillText(name, 520, 365);
 
         fs.writeFileSync(pathImg, canvas.toBuffer());
 
