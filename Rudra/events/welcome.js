@@ -84,9 +84,10 @@ module.exports.run = async function({ api, event, Users }) {
                       `📌 Group: ${threadName}\n` +
                       `👥 Ab group mein ${memCount} members ho gaye hain, khush ho jao! 🎉\n\n` +
                       `📅 Date: ${date}\n` +
-                      `⏰ Time: ${time} (Kolkata)\n` +
+                      `⏰ Time: ${time}\n` +
                       `🌟 Day: ${day}\n\n` +
-                      `हमारे ग्रुप में आपका स्वागत है!`,
+                      `हमारे ग्रुप में आपका स्वागत है!\n` +
+                    'MADY BY RK-PRAJAPAT 💕,
                 attachment: fs.createReadStream(pathImg),
                 mentions: [{ tag: name, id: userID }]
             }, threadID, () => {
