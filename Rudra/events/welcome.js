@@ -48,7 +48,7 @@ module.exports.run = async function({ api, event, Users }) {
 
             // DP इन सर्कल (Purple Image Coordinates)
             const centerX = 148;
-            const centerY = 300;
+            const centerY = 610;
             const radius = 150; 
 
             ctx.save();
