@@ -1,31 +1,71 @@
 module.exports.config = {
   name: "inf",
-  version: "1.0.1", 
+  version: "1.0.5", 
   hasPermssion: 0,
-  credits:"RK-PRAJAPAT" ,
-  description: "THIS BOT IS MADE BY PRINCE MEGHWANSI",
+  credits: "RK-PRAJAPAT",
+  description: "Bot Info with Direct Clickable Facebook Profile Option",
   usePrefix: true,
   commandCategory: "INFORMATION",
   cooldowns: 1,
-  dependencies: 
-  {
-    "request":"",
-    "fs-extra":"",
-    "axios":""
+  dependencies: {
+    "moment-timezone": ""
   }
 };
-module.exports.run = async function({ api,event,args,client,Users,Threads,__GLOBAL,Currencies }) {
-const axios = global.nodemodule["axios"];
-const request = global.nodemodule["request"];
-const fs = global.nodemodule["fs-extra"];
-const time = process.uptime(),
-    hours = Math.floor(time / (60 * 60)),
-    minutes = Math.floor((time % (60 * 60)) / 60),
-    seconds = Math.floor(time % 60);
-const moment = require("moment-timezone");
-const juswa = moment.tz("Asia/Kolkata").format("DD/MM/YYYY || HH:mm:s");
-var link =                                     
-["https://i.postimg.cc/pT66gXsn/IMG-20260516-074803.jpg","https://i.postimg.cc/pT66gXsn/IMG-20260516-074803.jpg","https://i.postimg.cc/pT66gXsn/IMG-20260516-074803.jpg"];
-var callback = () => api.sendMessage({body:`◁➽▷𝐁𝐎𝐓 💖 𝐈𝐍𝐅𝐎 ◁➽▷\n\n✧═════════•❁❀❁•═════════✧\n         😻 𝗜𝗡𝗙𝗢𝗥𝗠𝗔𝗧𝗜𝗢𝗡 😻\n         ✧═════════•❁❀❁•═════════✧\n\n𝗕𝗢𝗧 𝗡𝗔𝗠𝗘   →  🦋😻 [ ${global.config.BOTNAME} ]😻💞\n✧═════════•❁❀❁•═════════✧\n😍👀 𝗢𝘄𝗻𝗲𝗿 :- 𝐊𝐚𝐛𝐮𝐭𝐫𝐢 𝐁𝐞𝐛𝐲 🌸🍒\n✧═════════•❁❀❁•═════════✧\n\n*╔══❖•ೋ° °ೋ•❖══╗\n*💋*★᭄𝗖𝗿𝗲𝗱𝗶𝘁𝘀 :- ℝ𝕂-ℙℝ𝔸𝕁𝔸ℙ𝔸𝕋\n*╚══❖•ೋ° °ೋ•❖══╝*\n\n✧═════════•❁❀❁•═════════✧\n😻𝗕𝗢𝗧 𝗣𝗥𝗘𝗙𝗜𝗫   → 🍒🦋   [ ${global.config.PREFIX} ]🌸🔙\n✧═════════•❁❀❁•═════════✧\n🦋🍒 𝗗𝗔𝗧𝗘 & 𝗧𝗜𝗠𝗘   → [ ${juswa} ]\n✧═════════•❁❀❁•═════════✧\n💞🌸 𝗕𝗢𝗧 𝗥𝗨𝗡𝗡𝗜𝗡𝗚 𝗧𝗜𝗠𝗘 🌞🌸\n   [ ${hours}:${minutes}:${seconds} ]\n✧═════════•❁❀❁•═════════✧\n𝗢𝗪𝗡𝗘𝗥 𝗙𝗔𝗖𝗘𝗕𝗢𝗢𝗞 𝗟𝗜𝗡𝗞 ⥥⥥⥥⥥⥥⥥\nhttps://www.facebook.com/profile.php?id=61573328623221\n✧═════════•❁❀❁•═════════✧\n`,attachment: fs.createReadStream(__dirname + "/cache/juswa.jpg")}, event.threadID, () => fs.unlinkSync(__dirname + "/cache/juswa.jpg")); 
-      return request(encodeURI(link[Math.floor(Math.random() * link.length)])).pipe(fs.createWriteStream(__dirname+"/cache/juswa.jpg")).on("close",() => callback());
-   };
+
+module.exports.run = async function({ api, event, messageID }) {
+    const { threadID } = event;
+    const moment = require("moment-timezone");
+
+    // 1. AAPKI FB PROFILE DETAILS
+    const ownerID = "61573328623221"; 
+    const ownerName = "RK-PRAJAPAT";
+    const profileLink = `https://www.facebook.com/profile.php?id=${ownerID}`;
+
+    // 2. BOT RUNNING TIME & DATE LOGIC
+    const uptimeProcess = process.uptime();
+    const hours = Math.floor(uptimeProcess / 3600);
+    const minutes = Math.floor((uptimeProcess % 3600) / 60);
+    const seconds = Math.floor(uptimeProcess % 60);
+    const juswa = moment.tz("Asia/Kolkata").format("DD/MM/YYYY || hh:mm:ss A");
+
+    // 3. SHANDAAR TEXT LAYOUT
+    let msgBody = `◁➽▷𝐁𝐎𝐓 💖 𝐈𝐍𝐅𝐎 ◁➽▷\n\n` +
+                  `✧═════════•❁❀❁•═════════✧\n` +
+                  `         😻 𝗜𝗡𝗙𝗢𝗥𝗠𝗔𝗧𝗜𝗢𝗡 😻\n` +
+                  `         ✧═════════•❁❀❁•═════════✧\n\n` +
+                  `𝗕𝗢𝗧 𝗡𝗔𝗠block   →  🦋😻 [ ${global.config.BOTNAME || "RAVI BOT"} ]😻💞\n` +
+                  `✧═════════•❁❀❁•═════════✧\n` +
+                  `😍👀 𝗢𝘄𝗻𝗲𝗿 :- ${ownerName} 🌸🍒\n` +
+                  `✧═════════•❁❀❁•═════════✧\n\n` +
+                  `*╔══❖•ೋ° °ೋ•❖══╗\n` +
+                  `*💋*★᭄𝗖𝗿𝗲δ𝗶𝘁𝘀 :- ℝ𝕂-ℙℝ𝔸𝕁𝔸ℙ𝔸𝕋\n` +
+                  `*╚══❖•ೋ° °ೋ•❖══╝*\n\n` +
+                  `✧═════════•❁❀❁•═════════✧\n` +
+                  `😻𝗕𝗢𝗧 𝗣𝗥𝗘𝗙𝗜𝗫   → 🍒🦋   [ ${global.config.PREFIX || "."} ]🌸🔙\n` +
+                  `✧═════════•❁❀❁•═════════✧\n` +
+                  `🦋🍒 𝗗𝗔𝗧𝗘 & 𝗧𝗜𝗠𝗘   → [ ${juswa} ]\n` +
+                  `✧═════════•❁❀❁•═════════✧\n` +
+                  `💞🌸 𝗕𝗢𝗧 𝗥𝗨𝗡𝗡𝗜Ｎ𝗚 𝗧𝗜𝗠𝗘 🌞🌸\n` +
+                  `   [ ${hours}h : ${minutes}m : ${seconds}s ]\n` +
+                  `✧═════════•❁❀❁•═════════✧\n` +
+                  `👇🏻 TOUCH OR CLICK BELOW TO VISIT PROFILE 👇🏻\n` +
+                  `🔗 ${profileLink}\n` +
+                  `✧═════════•❁❀❁•═════════✧`;
+
+    try {
+        // 4. SMART MESSAGE OBJECT (Text + Clickable Link Preview)
+        // Is tarike se bina canvas error ke user link par touch karke direct profile par ja sakta hai
+        return api.sendMessage({
+            body: msgBody,
+            mentions: [{
+                tag: ownerName,
+                id: ownerID
+            }]
+        }, threadID, (err, info) => {
+            if (err) console.log("Info Command Error:", err);
+        });
+
+    } catch (e) {
+        console.log("Error in inf command:", e.message);
+    }
+};
